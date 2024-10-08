@@ -11,41 +11,49 @@ import {
     TrailingActions
 } from "react-swipeable-list"
 import "react-swipeable-list/dist/styles.css"
+import { useBudget } from "../hooks/useBudget"
 
 type ExpenseDetailProps ={
     expense: Expense
 }
 
-const leadingActions = () =>(
-    <LeadingActions>
 
-        <SwipeAction
-        onClick={()=>{}}>
-            Actualizar
-        </SwipeAction>
 
-    </LeadingActions>
-)
 
-const trailingActions = () =>(
-    <TrailingActions>
-
-        <SwipeAction
-        onClick={()=>{}}>
-            Eliminar
-        </SwipeAction>
-
-    </TrailingActions>
-)
 export default function ExpenseDetail({expense}: ExpenseDetailProps) {
+    const {dispatch} = useBudget()
     const categoryInfo = useMemo(()=> categories.filter(cat =>cat.id === expense.category)[0],[expense])
-        return (
+    
+    const trailingActions = () =>(
+        <TrailingActions>
+    
+            <SwipeAction
+            onClick={()=>dispatch({type: "remove-expense", payload:{id: expense.id}})}
+            destructive={true}>
+                Eliminar
+            </SwipeAction>
+    
+        </TrailingActions>
+    )    
+
+    const leadingActions = () =>(
+        <LeadingActions>
+    
+            <SwipeAction
+            onClick={()=>dispatch({type: "get-expense-by-id", payload:{id:expense.id}})}>
+                Actualizar
+            </SwipeAction>
+    
+        </LeadingActions>
+    )
+
+    return (
             <SwipeableList>
                 <SwipeableListItem
-                maxSwipe={30}
+                maxSwipe={1}
                 leadingActions={leadingActions()}
                 trailingActions={trailingActions()}>
-                    <div className="bg-white shadow-lg p-10 w-full border-b border-gray-200 flex gap-5 items-center">
+                    <div className="bg-white shadow-lg p-5 w-full border-b border-gray-200 flex gap-5 items-center">
                         <div>
                             <img
                             src={`/icono_${categoryInfo.icon}.svg`}
